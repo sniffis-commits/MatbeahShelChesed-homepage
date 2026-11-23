@@ -11,9 +11,11 @@ index.html                     single self-contained page (HTML + embedded CSS)
 assets/
   screens/*.png                real screenshots captured from the running app
   cards/*.png                  English caption cards for the video
-  instructional.mp4            24.5 s silent walkthrough (H.264, 1280x720, ~0.5 MB)
+  narration/*.mp3              per-slide English voiceover (edge-tts, en-US-JennyNeural)
+  instructional.mp4            40 s narrated walkthrough (H.264 + AAC, 1280x720, ~0.6 MB)
   make_cards.py                generates the caption cards (Pillow)
-  make_video.ps1               builds the MP4 from screenshots with ffmpeg
+  make_narration.py            generates the voiceover with edge-tts
+  make_video.ps1               builds the narrated MP4 from screenshots with ffmpeg
 ```
 
 ## Screenshots
@@ -22,14 +24,15 @@ All images in `assets/screens/` were captured from the actual running web applic
 
 ## Video
 
-`assets/instructional.mp4` is a **silent slideshow compiled from those real screenshots** with ffmpeg and English caption cards. It is not a screen recording and not AI-generated footage. To reproduce it:
+`assets/instructional.mp4` is a **narrated slideshow compiled from those real screenshots** with ffmpeg, English caption cards and an English voiceover. It is not a screen recording and not AI-generated footage. Each slide is held long enough for its spoken line, with 0.5 s crossfades. To reproduce it:
 
 ```bash
 python assets/make_cards.py
+python assets/make_narration.py
 powershell -ExecutionPolicy Bypass -File assets/make_video.ps1
 ```
 
-Requirements: Python + Pillow for the cards, ffmpeg on `PATH` for the video. The script is deterministic: 12 slides, 2.5 s each, 0.5 s crossfade, H.264 CRF 27, 24 fps, no audio.
+Requirements: Python + Pillow for the cards, `edge-tts` for the narration (`python -m pip install edge-tts`), and ffmpeg on `PATH` for the video. The build script is deterministic: 12 slides, slide durations derived from each MP3, H.264 CRF 27 video at 24 fps and 96 kbps AAC audio.
 
 ## Sections
 
