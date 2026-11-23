@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123c2c">
+<meta name="description" content="Matbeah Shel Chesed — a digital charity box for web, Android and kiosk. Development demo: no real money, no real payments.">
+<title>מטבע של חסד · Matbeah Shel Chesed — Digital Charity Box</title>
+<style>
+  :root{
+    --forest:#123c2c; --deep:#0b2b1e; --soft:#1e5c42; --cream:#f7f3e8;
+    --paper:#fffdf7; --gold:#d9a441; --gold-light:#f3e2b8; --ink:#1c2b23;
+    --muted:#6d7b71; --line:#e4ddc9; --shadow:0 20px 55px rgba(18,60,44,.11);
+    --radius:22px; --max:1180px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--cream);color:var(--ink);
+    font-family:"Segoe UI",Tahoma,"Assistant","Heebo",Arial,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img,video{max-width:100%;display:block}
+  h1,h2,h3{line-height:1.2;letter-spacing:-.02em;margin:0 0 .5em}
+  h1{font-size:clamp(2.3rem,6vw,4.4rem)}
+  h2{font-size:clamp(1.8rem,4vw,2.8rem)}
+  h3{font-size:1.15rem}
+  p{margin:.5em 0}
+  .wrap{width:min(100% - 40px,var(--max));margin-inline:auto}
+  .ltr{dir:ltr;unicode-bidi:isolate}
+  .muted{color:var(--muted)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.76rem;font-weight:800;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-bottom:14px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--gold)}
+  .skip{position:absolute;inset-inline-start:-999px;top:0;background:var(--forest);color:#fff;padding:10px 16px;z-index:99}
+  .skip:focus{inset-inline-start:10px;top:10px}
+  a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,253,247,.92);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:13px 0}
+  .brand{display:flex;align-items:center;gap:12px}
+  .mark{width:46px;height:46px;border-radius:14px;background:var(--forest);color:var(--gold-light);
+    display:grid;place-items:center;font-size:1.6rem;font-weight:800;box-shadow:0 8px 18px rgba(18,60,44,.22)}
+  .brand strong{display:block;color:var(--forest);font-size:1.05rem;line-height:1.15}
+  .brand small{display:block;color:var(--muted);font-size:.7rem;line-height:1.15}
+  nav ul{display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap;justify-content:flex-end}
+  nav a{padding:8px 13px;border-radius:999px;font-size:.85rem;font-weight:650;color:var(--forest)}
+  nav a:hover{background:#e9f1e8}
+
+  /* Hero */
+  .demo-strip{background:linear-gradient(90deg,#f8e7b9,#fdf5df,#f8e7b9);color:#6d511d;text-align:center;
+    font-size:.82rem;font-weight:700;padding:9px 16px;border-bottom:1px solid #e8d5a5}
+  .hero{position:relative;overflow:hidden;padding:clamp(46px,8vw,96px) 0 40px}
+  .hero::before{content:"";position:absolute;inset-inline-end:-180px;top:-180px;width:560px;height:560px;border-radius:50%;
+    background:radial-gradient(circle,rgba(217,164,65,.18),transparent 65%);pointer-events:none}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:clamp(28px,5vw,64px);align-items:center}
+  .hero h1{background:linear-gradient(115deg,var(--forest),var(--soft),#a47c2b);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-lead{font-size:clamp(1rem,1.6vw,1.2rem);color:var(--muted);max-width:56ch}
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border-radius:999px;font-weight:750;font-size:.92rem;
+    border:1px solid transparent;transition:transform .2s,box-shadow .2s,background .2s}
+  .btn:hover{transform:translateY(-3px)}
+  .btn-primary{background:var(--forest);color:#fff;box-shadow:0 12px 28px rgba(18,60,44,.24)}
+  .btn-primary:hover{background:var(--forest-soft,#1e5c42)}
+  .btn-ghost{background:var(--paper);border-color:var(--line);color:var(--forest)}
+  .hero-art{position:relative;display:grid;place-items:center}
+  .hero-art img{border-radius:26px;border:1px solid var(--line);box-shadow:var(--shadow);width:100%}
+  .float-badge{position:absolute;inset-inline-start:-10px;bottom:-22px;background:var(--forest);color:#fff;
+    padding:12px 18px;border-radius:16px;box-shadow:0 14px 30px rgba(18,60,44,.3);font-size:.82rem;max-width:230px}
+  .float-badge b{color:var(--gold-light);display:block;font-size:1.1rem}
+
+  /* Sections */
+  section{padding:clamp(48px,7vw,84px) 0}
+  .section-head{max-width:760px;margin-bottom:34px}
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}
+  .feature{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);
+    transition:transform .25s,box-shadow .25s}
+  .feature:hover{transform:translateY(-5px);box-shadow:0 26px 60px rgba(18,60,44,.15)}
+  .feature .num{width:44px;height:44px;border-radius:13px;background:#edf4ea;color:var(--forest);
+    display:grid;place-items:center;font-weight:850;margin-bottom:16px}
+  .feature p{color:var(--muted);font-size:.92rem}
+  .alt{background:linear-gradient(180deg,#f1f6ed,#faf7ed);border-block:1px solid var(--line)}
+
+  /* Platform cards */
+  .platforms{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+  .platform{background:var(--forest);color:#f4f8f1;border-radius:var(--radius);padding:28px;position:relative;overflow:hidden}
+  .platform::after{content:"";position:absolute;inset-inline-end:-50px;inset-block-start:-50px;width:160px;height:160px;
+    border-radius:50%;background:rgba(217,164,65,.16)}
+  .platform h3{color:var(--gold-light)}
+  .platform p{color:#d5e4d8;font-size:.9rem}
+  .tag{display:inline-block;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.12);
+    font-size:.7rem;font-weight:700;letter-spacing:.05em;margin-bottom:12px}
+
+  /* Gallery */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+  figure{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+  figure a{display:block;overflow:hidden;background:#e9eee4}
+  figure img{width:100%;transition:transform .5s}
+  figure a:hover img{transform:scale(1.04)}
+  figcaption{padding:14px 16px;font-size:.86rem;font-weight:700;color:var(--forest)}
+  figcaption small{display:block;color:var(--muted);font-weight:500;font-size:.75rem;margin-top:3px}
+
+  /* Video */
+  .video-card{background:var(--deep);border-radius:28px;padding:clamp(16px,3vw,30px);box-shadow:0 26px 70px rgba(11,43,30,.32)}
+  .video-card video{width:100%;border-radius:16px;background:#000;aspect-ratio:16/9}
+  .video-card p{color:#cfe0d2;font-size:.88rem;margin-top:16px}
+
+  /* Demo credentials */
+  .demo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+  .demo-card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+  .demo-card h3{color:var(--forest);font-size:1rem}
+  code{display:block;background:#f1f4ec;border:1px solid var(--line);border-radius:10px;padding:9px 11px;
+    font-family:ui-monospace,Consolas,monospace;font-size:.8rem;direction:ltr;text-align:start;
+    word-break:break-all;margin-top:8px;color:var(--forest)}
+
+  /* FAQ + footer */
+  details{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+  summary{cursor:pointer;font-weight:750;color:var(--forest)}
+  details p{color:var(--muted);font-size:.9rem;margin-top:10px}
+  footer{background:var(--deep);color:#c8dbcd;padding:34px 0;font-size:.82rem}
+  .foot{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center}
+  .foot strong{color:var(--gold-light)}
+  .rtl-note{font-size:.8rem;color:var(--muted)}
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-art{max-width:520px;margin-inline:auto}
+    .float-badge{inset-inline-start:12px}
+    nav ul{justify-content:center}
+    .bar{flex-wrap:wrap;justify-content:center}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="Matbeah Shel Chesed home">
+      <span class="mark ltr" aria-hidden="true">₪</span>
+      <span><strong>מטבע של חסד</strong><small class="ltr">Matbeah Shel Chesed · Digital Charity Box</small></span>
+    </a>
+    <nav aria-label="Page sections">
+      <ul>
+        <li><a href="#features">תכונות · Features</a></li>
+        <li><a href="#platforms">פלטפורמות</a></li>
+        <li><a href="#screenshots">מסכים</a></li>
+        <li><a href="#video">סרטון הדגמה</a></li>
+        <li><a href="#demo">חשבונות דמו</a></li>
+        <li><a href="#safety">בטיחות</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="demo-strip" role="note">
+  ⚠ Development demo — virtual coins only · no real payments · no real money · TEST / DEMO
+</div>
+
+<main id="main">
+  <div class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow ltr">DIGITAL CHARITY BOX · DEVELOPMENT DEMO</span>
+        <h1>מטבע של חסד</h1>
+        <p class="hero-lead">קופת צדקה דיגיטלית עם מטבעות וירטואליים, יומן פעולות שקוף ובחירה מפורשת של סכום התרומה — באינטרנט, באנדרואיד ובקיוסק.</p>
+        <p class="hero-lead ltr" dir="ltr">A digital charity box with virtual Israeli coins, a transparent append-only ledger and explicit monthly donation approval — on web, Android and a public kiosk.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#video">צפו בסרטון ההדגמה</a>
+          <a class="btn btn-ghost" href="#screenshots">מסכים מהאפליקציה</a>
+          <a class="btn btn-ghost" href="#demo">חשבונות דמו</a>
+        </div>
+        <p class="rtl-note" style="margin-top:26px">₪10 · ₪5 · ₪2 · ₪1 · ₪0.50 &nbsp;—&nbsp; מטבעות וירטואליים בלבד</p>
+      </div>
+      <div class="hero-art">
+        <img src="assets/screens/01-landing-he.png" alt="The Matbeah Shel Chesed homepage in Hebrew, showing the charity box hero section">
+        <div class="float-badge ltr" dir="ltr"><b>100% virtual</b>No real money moves in this build.</div>
+      </div>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow ltr">WHY IT EXISTS</span>
+        <h2>שקיפות בכל מטבע</h2>
+        <p class="muted">המשתמש בוחר כמה לתרום. הסכום מופחת מהיתרה הווירטואלית רק לאחר אירוע תשלום מוצלח ואמאמת — לא בעת האישור.</p>
+      </div>
+      <div class="features">
+        <article class="feature"><div class="num ltr">₪</div><h3>קופה ויזואלית</h3><p>קופה שקופה בסגנון תלת־ממדי עם מטבעות ישראלים מונפשים. גררו או הקישו כדי להוסיף מטבע וירטואלי.</p></article>
+        <article class="feature"><div class="num ltr">01</div><h3>יומן פעולות בלתי ניתן לשינוי</h3><p>כל התנועות נרשמות ביומן בלתי ניתן לשינוי, עם סכומים באגורות שלמות, איידמפוטנציה וביקורת מלאה.</p></article>
+        <article class="feature"><div class="num ltr">02</div><h3>אישור חודשי מפורש</h3><p>בחירת סכום, סקירה, אישור ותזמון. ביטול או שינוי אפשריים עד תחילת העיבוד.</p></article>
+        <article class="feature"><div class="num ltr">03</div><h3>תשלומים מדומים בלבד</h3><p>שבעה תרחישי בדיקה: הצלחה, כישלון, timeout, המתנה, תוצאה לא ברורה, webhook כפול ו־retry. שום חיוב אמיתי.</p></article>
+        <article class="feature"><div class="num ltr">04</div><h3>קיוסק ציבורי</h3><p>מסך מלא עם כפתורים גדולים, QR לחיבור חשבון, ספירה לאחור ואיפוס אוטומטי — ללא שמירת מידע אישי במכשיר.</p></article>
+        <article class="feature"><div class="num ltr">05</div><h3>ניהול והרשאות</h3><p>לוח ניהול עם תפקידים, יומן ביקורת, בקרות הרשאה בצד השרת ותיקונים מאומתים בלבד.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="platforms">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow ltr">ONE BACKEND · THREE EXPERIENCES</span>
+        <h2>שלוש פלטפורמות, מערכת אחת</h2>
+        <p class="muted">אותו מודל נתונים, אותו יומן כספי ואותה אימות — בכל ממשק.</p>
+      </div>
+      <div class="platforms">
+        <article class="platform"><span class="tag ltr">RESPONSIVE PWA</span><h3>אפליקציית ווב</h3><p>React + TypeScript, עברית RTL ואנגלית LTR, התקנה כ־PWA, דף בית, קופה, תרומה, היסטוריה, פרופיל וניהול.</p></article>
+        <article class="platform"><span class="tag ltr">ANDROID · DEBUG APK</span><h3>אפליקציית אנדרואיד</h3><p>פרויקט Capacitor 7 עם סמל ומסך פתיחה מותאמים. קובץ APK למפתחים זמין בתיקיית artifacts של הפרויקט הראשי.</p></article>
+        <article class="platform"><span class="tag ltr">TOUCHSCREEN KIOSK</span><h3>מצב קיוסק</h3><p>מסכי מגע גדולים, מצב הדגמה אנונימי, סריקת QR, איפוס לאחר חוסר פעילות והוראות פריסה עם Lock Task Mode / MDM.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="screenshots">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow ltr">REAL UI · REAL SCREENSHOTS</span>
+        <h2>מסכים מהמערכת</h2>
+        <p class="muted">צילומי מסך אמיתיים שצולמו מהאפליקציה הפועלת. לחצו על תמונה לפתיחה בגודל מלא.</p>
+      </div>
+      <div class="gallery">
+        <figure><a href="assets/screens/01-landing-en.png"><img src="assets/screens/01-landing-en.png" alt="English landing page hero" loading="lazy"></a><figcaption>דף הבית — אנגלית<small>Landing page · English LTR</small></figcaption></figure>
+        <figure><a href="assets/screens/01-landing-he.png"><img src="assets/screens/01-landing-he.png" alt="Hebrew RTL landing page hero" loading="lazy"></a><figcaption>דף הבית — עברית<small>Landing page · Hebrew RTL</small></figcaption></figure>
+        <figure><a href="assets/screens/02-dashboard.png"><img src="assets/screens/02-dashboard.png" alt="Dashboard with balance cards and charity box" loading="lazy"></a><figcaption>לוח בקרה ויתרות<small>Dashboard · total, available, reserved, donated</small></figcaption></figure>
+        <figure><a href="assets/screens/03-charity-box.png"><img src="assets/screens/03-charity-box.png" alt="Animated charity box with Israeli coin rail" loading="lazy"></a><figcaption>קופת החסד והמטבעות<small>Animated box · ₪10 / ₪5 / ₪2 / ₪1 / ₪0.50</small></figcaption></figure>
+        <figure><a href="assets/screens/04-donate.png"><img src="assets/screens/04-donate.png" alt="Donation amount selection screen" loading="lazy"></a><figcaption>בחירת סכום התרומה<small>Donation selection · quick amounts and custom</small></figcaption></figure>
+        <figure><a href="assets/screens/05-history.png"><img src="assets/screens/05-history.png" alt="Donation history table with statuses" loading="lazy"></a><figcaption>היסטוריית תרומות<small>History · status, successful amount, balance after</small></figcaption></figure>
+        <figure><a href="assets/screens/06-admin.png"><img src="assets/screens/06-admin.png" alt="Administrator dashboard overview" loading="lazy"></a><figcaption>מרכז ניהול<small>Admin · RBAC, ledger, audit, payments</small></figcaption></figure>
+        <figure><a href="assets/screens/08-kiosk-he.png"><img src="assets/screens/08-kiosk-he.png" alt="Hebrew RTL kiosk interface" loading="lazy"></a><figcaption>קיוסק — עברית RTL<small>Kiosk · auto-reset and QR connection</small></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="video">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow ltr">SHORT WALKTHROUGH · 24 SEC</span>
+        <h2>סרטון הדגמה קצר</h2>
+        <p class="muted">סרטון שקט (ללא קריינות) שהורכב מצילומי המסך האמיתיים שלעיל — ממטבעות וירטואליים ועד היסטוריית תרומות וקיוסק.</p>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata" playsinline poster="assets/screens/03-charity-box.png" aria-label="Instructional walkthrough video">
+          <source src="assets/instructional.mp4" type="video/mp4">
+          Your browser does not support embedded video. <a class="ltr" href="assets/instructional.mp4">Download the MP4</a>.
+        </video>
+        <p class="ltr" dir="ltr">This is a silent slideshow compiled from real application screenshots with ffmpeg — not a screen recording and not AI-generated footage. Source cards and build script are included in <code style="display:inline;padding:2px 6px">assets/</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="demo">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow ltr">TRY IT LOCALLY</span>
+        <h2>חשבונות דמו</h2>
+        <p class="muted">הריצו את הפרויקט הראשי עם <code style="display:inline;padding:2px 6px">npm run seed</code> והתחברו לאחד מחשבונות הדמו.</p>
+      </div>
+      <div class="demo-grid">
+        <div class="demo-card"><h3>תורם · Donor</h3><code>demo@msc.local</code><code>DemoPassword123!</code></div>
+        <div class="demo-card"><h3>מנהל על · Super admin</h3><code>admin@msc.local</code><code>AdminPassword123!</code></div>
+        <div class="demo-card"><h3>תמיכה · Support</h3><code>support@msc.local</code><code>SupportPassword123!</code></div>
+        <div class="demo-card"><h3>מנהל צדקה · Charity manager</h3><code>charity@msc.local</code><code>CharityPassword123!</code></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="safety">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow ltr">IMPORTANT</span>
+        <h2>מה זה — ומה זה לא</h2>
+      </div>
+      <details open>
+        <summary>אין כאן כסף אמיתי או תשלומים אמיתיים</summary>
+        <p>כל היתרות הן וירטואליות ונשמרות כמספרים שלמים של אגורות. ספק התשלום הוא סימולציה מקומית; לא מתבצעות פניות לרשת, לא נשמרים פרטי כרטיס ואין אישורי PSP אמיתיים.</p>
+      </details>
+      <details>
+        <summary>האם קובץ ה־APK מוכן להפצה?</summary>
+        <p>לא. קיים קובץ APK למפתחים, חתום במפתח debug בלבד, לצורכי בדיקה. אין מפתח signing או APK/AAB מהדורה רשמית. יש להשלים סקירה משפטית, חשבונאית ורגולטורית לפני כל פריסה.</p>
+      </details>
+      <details>
+        <summary>האם המערכת עומדת בתקנות?</summary>
+        <p>לא הוצהרה כל תאימות. רשימת נושאים לבדיקה מקצועית — הגנת פרטיות, רישום עמותות, הנהלת חשבונות, סליקה ונגישות — נמצאת במסמך Israeli Regulatory Checklist שבפרויקט הראשי. אין להתייחס לדף הזה כייעוץ משפטי.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span><strong>מטבע של חסד</strong> · Matbeah Shel Chesed — development demonstrator</span>
+    <span class="ltr" dir="ltr">All values are fictional · No real payments · TEST / DEMO only</span>
+  </div>
+</footer>
+</body>
+</html>
